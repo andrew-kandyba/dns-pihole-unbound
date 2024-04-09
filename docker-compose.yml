@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  pihole:
+    image: ${PROJECT}/pihole:${TAG}
+    container_name: ${PROJECT}-pihole
+    ports:
+      - ${PI_HOLE_PORT}:53/tcp
+      - ${PI_HOLE_PORT}:53/udp
+      - ${PI_HOLE_WEB_PORT}:80/tcp
+    environment:
+      TZ: ${TZ}
+      DNSSEC: 'true'
+      DNSMASQ_LISTENING: 'all'
+      WEBPASSWORD: ${PI_HOLE_PASSWORD}
+      FTLCONF_LOCAL_IPV4: ${HOST_IP}
+      PIHOLE_DNS_: unbound
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+  unbound:
+    image: ${PROJECT}/unbound:${TAG}
+    container_name: ${PROJECT}-unbound
+    ports:
+      - ${UNBOUND_PORT}:53/tcp
+      - ${UNBOUND_PORT}:53/udp
+    restart: unless-stopped
